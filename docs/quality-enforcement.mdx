@@ -20,6 +20,9 @@ following policy to every project:
 - Every project uses a committed `packages.lock.json`.
 - the banned-API analyzer reads `BannedSymbols.txt`.
 
+The Web project also pins the SDK's WebAssembly build pack to `10.0.10` so installed
+workload manifests cannot change locked restores. Update this pin with the SDK baseline.
+
 `.editorconfig` is the source of truth for editor whitespace, namespace placement, naming, and the
 compiler-enforceable style rules. CI runs Roslyn's semantic `style` formatter rather than
 normalizing line endings, so Windows and Unix checkouts remain valid. `BannedSymbols.txt` rejects
