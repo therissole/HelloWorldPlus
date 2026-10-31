@@ -36,4 +36,13 @@
     <InternalsVisibleTo Include="HelloWorldPlus.WebTests" />
   </ItemGroup>
 
+  <!-- Installed workload manifests can override the SDK's bundled pack version.
+       Keep locked restores consistent with the pinned SDK on every build host. -->
+  <Target Name="PinWebAssemblySdkPack" BeforeTargets="ProcessFrameworkReferences">
+    <ItemGroup>
+      <KnownWebAssemblySdkPack Update="Microsoft.NET.Sdk.WebAssembly.Pack"
+                              WebAssemblySdkPackVersion="10.0.10" />
+    </ItemGroup>
+  </Target>
+
 </Project>
