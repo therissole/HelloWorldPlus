@@ -1,6 +1,6 @@
 # Administration portal UI prototype
 
-This is a self-contained, interactive prototype for reviewing the proposed Symphony
+This is a self-contained, interactive prototype for reviewing the proposed HelloWorldPlus
 administration experience before adding a production Blazor project or changing any API
 contracts.
 
@@ -23,13 +23,13 @@ the production phase after the interaction and visual direction are approved.
 
 ## Proposed production architecture
 
-Add a separate `symphony-test-1.Web` .NET 10 Blazor Web App using Interactive Server rendering.
+Add a separate `HelloWorldPlus.Web` .NET 10 Blazor Web App using Interactive Server rendering.
 MudBlazor requires an interactive render mode, and server interactivity keeps this administrative
 reference simple: one UI project, no WebAssembly client project, no browser-to-API CORS setup, and
 server-to-server API calls through Aspire service discovery.
 
 ```text
-src/symphony-test-1.Web/
+src/HelloWorldPlus.Web/
 ├── Components/
 │   ├── App.razor
 │   ├── Routes.razor

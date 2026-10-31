@@ -2,11 +2,11 @@ services:
   postgres:
     image: postgres:18-alpine
     environment:
-      POSTGRES_DB: symphony_test_1
+      POSTGRES_DB: HelloWorldPlus
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "${SYMPHONY_POSTGRES_PORT:-5432}:5432"
+      - "${HELLOWORLDPLUS_POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql
     healthcheck:
@@ -20,7 +20,7 @@ services:
       context: .
       dockerfile: Dockerfile.Migrations
     environment:
-      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=symphony_test_1;Username=postgres;Password=postgres"
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=HelloWorldPlus;Username=postgres;Password=postgres"
     depends_on:
       postgres:
         condition: service_healthy
@@ -32,15 +32,15 @@ services:
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: admin
     ports:
-      - "${SYMPHONY_KEYCLOAK_PORT:-8180}:8080"
+      - "${HELLOWORLDPLUS_KEYCLOAK_PORT:-8180}:8080"
     volumes:
-      - ./src/symphony-test-1.AppHost/Realms:/opt/keycloak/data/import:ro
-      - ./src/symphony-test-1.AppHost/Themes:/opt/keycloak/themes:ro
+      - ./src/HelloWorldPlus.AppHost/Realms:/opt/keycloak/data/import:ro
+      - ./src/HelloWorldPlus.AppHost/Themes:/opt/keycloak/themes:ro
     healthcheck:
       test:
         [
           "CMD-SHELL",
-          "exec 3<>/dev/tcp/localhost/8080 && printf 'GET /realms/symphony HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && head -1 <&3 | grep -q '200'"
+          "exec 3<>/dev/tcp/localhost/8080 && printf 'GET /realms/helloworldplus HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && head -1 <&3 | grep -q '200'"
         ]
       interval: 10s
       timeout: 5s
@@ -83,7 +83,7 @@ services:
       OPENFGA_PLAYGROUND_ENABLED: "false"
       OPENFGA_LIST_OBJECTS_DEADLINE: "5s"
     ports:
-      - "${SYMPHONY_OPENFGA_PORT:-8082}:8080"
+      - "${HELLOWORLDPLUS_OPENFGA_PORT:-8082}:8080"
     depends_on:
       openfga-migrate:
         condition: service_completed_successfully
@@ -94,7 +94,7 @@ services:
       dockerfile: Dockerfile.OpenFgaProvisioning
     restart: on-failure:10
     environment:
-      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=symphony_test_1;Username=postgres;Password=postgres"
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=HelloWorldPlus;Username=postgres;Password=postgres"
       OpenFga__ApiUrl: "http://openfga:8080"
       OpenFga__StoreName: "administration-authorization"
       OpenFga__BootstrapSuperuserSubjects: "b612a21b-b2e7-4a97-a2b7-5c3d77d0342c,f5a0f69c-8cc7-4f68-9b45-6ff5b6f8b730"
@@ -112,10 +112,10 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: http://+:8080
-      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=symphony_test_1;Username=postgres;Password=postgres"
-      Authentication__Authority: "http://localhost:${SYMPHONY_KEYCLOAK_PORT:-8180}/realms/symphony"
-      Authentication__MetadataAddress: "http://keycloak:8080/realms/symphony/.well-known/openid-configuration"
-      Authentication__Audience: "symphony-api"
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=HelloWorldPlus;Username=postgres;Password=postgres"
+      Authentication__Authority: "http://localhost:${HELLOWORLDPLUS_KEYCLOAK_PORT:-8180}/realms/helloworldplus"
+      Authentication__MetadataAddress: "http://keycloak:8080/realms/helloworldplus/.well-known/openid-configuration"
+      Authentication__Audience: "helloworldplus-api"
       Authentication__RequireHttpsMetadata: "false"
       OpenFga__ApiUrl: "http://openfga:8080"
       OpenFga__StoreName: "administration-authorization"
@@ -142,7 +142,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "${SYMPHONY_API_PORT:-8081}:8080"
+      - "${HELLOWORLDPLUS_API_PORT:-8081}:8080"
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: http://+:8080

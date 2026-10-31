@@ -1,0 +1,167 @@
+{
+  "realm": "helloworldplus",
+  "displayName": "HelloWorldPlus",
+  "loginTheme": "helloworldplus",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "registrationEmailAsUsername": false,
+  "rememberMe": false,
+  "verifyEmail": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": true,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": true,
+  "roles": {
+    "realm": [
+      {
+        "name": "administrator",
+        "description": "Authenticated administrator of the HelloWorldPlus reference application",
+        "composite": false,
+        "clientRole": false
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "helloworldplus-api",
+      "name": "HelloWorldPlus API",
+      "description": "Bearer-only audience for the HelloWorldPlus administration API",
+      "enabled": true,
+      "bearerOnly": true,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "publicClient": false,
+      "protocol": "openid-connect"
+    },
+    {
+      "clientId": "helloworldplus-admin",
+      "name": "HelloWorldPlus Administration",
+      "description": "Public authorization-code client for the Blazor WebAssembly administration UI",
+      "enabled": true,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "publicClient": true,
+      "frontchannelLogout": false,
+      "protocol": "openid-connect",
+      "redirectUris": [
+        "*"
+      ],
+      "webOrigins": [
+        "*"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "+"
+      },
+      "protocolMappers": [
+        {
+          "name": "helloworldplus-api-audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.custom.audience": "helloworldplus-api",
+            "id.token.claim": "false",
+            "access.token.claim": "true",
+            "lightweight.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "acceptance-tests",
+      "name": "Acceptance tests",
+      "description": "Disposable client for externally driven acceptance tests",
+      "enabled": true,
+      "bearerOnly": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "secret": "acceptance-tests-local-secret",
+      "protocol": "openid-connect",
+      "protocolMappers": [
+        {
+          "name": "helloworldplus-api-audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.custom.audience": "helloworldplus-api",
+            "id.token.claim": "false",
+            "access.token.claim": "true",
+            "lightweight.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "id": "b612a21b-b2e7-4a97-a2b7-5c3d77d0342c",
+      "username": "helloworldplus-admin",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "HelloWorldPlus",
+      "lastName": "Administrator",
+      "email": "admin@helloworldplus.local",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "ChangeMe!12345",
+          "temporary": true
+        }
+      ],
+      "realmRoles": [
+        "administrator"
+      ]
+    },
+    {
+      "id": "f5a0f69c-8cc7-4f68-9b45-6ff5b6f8b730",
+      "username": "acceptance-browser",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Acceptance",
+      "lastName": "Browser",
+      "email": "acceptance-browser@helloworldplus.local",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Acceptance!12345",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "administrator"
+      ]
+    },
+    {
+      "id": "907718f8-0d56-421e-8a45-aac8d9679075",
+      "username": "acceptance-standard-user",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Acceptance",
+      "lastName": "Standard User",
+      "email": "acceptance-standard-user@helloworldplus.local",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "AcceptanceStandard!12345",
+          "temporary": false
+        }
+      ],
+      "realmRoles": []
+    }
+  ]
+}

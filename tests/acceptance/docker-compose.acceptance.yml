@@ -1,7 +1,7 @@
 services:
   keycloak:
     environment:
-      KC_HOSTNAME: "http://localhost:${SYMPHONY_KEYCLOAK_PORT}"
+      KC_HOSTNAME: "http://localhost:${HELLOWORLDPLUS_KEYCLOAK_PORT}"
       KC_HOSTNAME_BACKCHANNEL_DYNAMIC: "true"
 
   api:

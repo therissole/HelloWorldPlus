@@ -16,22 +16,22 @@ description: 'Run and verify the Vertical Slice Architecture reference'
 ## Run with Aspire
 
 ```bash
-git clone https://github.com/therissole/symphony-test-1.git
-cd symphony-test-1
+git clone https://github.com/therissole/HelloWorldPlus.git
+cd HelloWorldPlus
 aspire run
 ```
 
 The Aspire AppHost starts:
 
 - PostgreSQL 18 with environment-local ephemeral data
-- Keycloak with the committed local `symphony` realm
+- Keycloak with the committed local `helloworldplus` realm
 - A one-shot .NET migration resource
 - The API, Web development server, and same-origin gateway after all migrations complete
   successfully
 - The local Mintlify documentation preview
 
-Open the **Symphony administration** endpoint shown in the Aspire dashboard to use the dashboard,
-languages, and greetings UI. Sign in as `symphony-admin` with the temporary password
+Open the **HelloWorldPlus administration** endpoint shown in the Aspire dashboard to use the dashboard,
+languages, and greetings UI. Sign in as `helloworldplus-admin` with the temporary password
 `ChangeMe!12345`; Keycloak requires a new password on first sign-in. The documentation resource
 reloads as files under `docs/` change. In
 the documentation, open **API Reference**, select an endpoint, and choose **Try it** to send a
@@ -42,7 +42,7 @@ documentation resource starts.
 Use the administration endpoint to exercise the slices through the same public boundary as the UI:
 
 ```bash
-curl <Symphony-administration-endpoint>/api/health
+curl <HelloWorldPlus-administration-endpoint>/api/health
 ```
 
 Health is public. Language and greeting calls require a bearer token obtained through the
@@ -84,7 +84,7 @@ aspire run
 If a Windows agent process cannot resolve `aspire`, run
 `& "$env:USERPROFILE\.aspire\bin\aspire.exe" run`.
 
-Keep the watcher open. The dashboard and startup output identify the isolated **Symphony
+Keep the watcher open. The dashboard and startup output identify the isolated **HelloWorldPlus
 administration** endpoint for that run. Do not manually tear down and recreate PostgreSQL,
 Keycloak, or migrations after an application or UI edit, so an agent can verify a change directly
 instead of rebuilding the stack. The API and Web client are separate watched resources. If a
@@ -95,7 +95,7 @@ aspire resource api stop
 aspire resource api start
 aspire resource web stop
 aspire resource web start
-Invoke-RestMethod <Symphony-administration-endpoint>/api/health
+Invoke-RestMethod <HelloWorldPlus-administration-endpoint>/api/health
 ```
 
 Open or reload the same administration endpoint to test the browser client against that same API.
@@ -125,9 +125,9 @@ docker compose down -v
 ```
 
 Docker Compose exposes Keycloak at `http://localhost:8180` and the application at
-`http://localhost:8081`. Set `SYMPHONY_API_PORT`, `SYMPHONY_KEYCLOAK_PORT`, or
-`SYMPHONY_POSTGRES_PORT` before starting Compose to override the defaults. Compose derives the
-browser-visible Keycloak authority from `SYMPHONY_KEYCLOAK_PORT`. Its committed realm allows
+`http://localhost:8081`. Set `HELLOWORLDPLUS_API_PORT`, `HELLOWORLDPLUS_KEYCLOAK_PORT`, or
+`HELLOWORLDPLUS_POSTGRES_PORT` before starting Compose to override the defaults. Compose derives the
+browser-visible Keycloak authority from `HELLOWORLDPLUS_KEYCLOAK_PORT`. Its committed realm allows
 all redirect URIs and web origins for local development only because Keycloak does not support a
 wildcard in the URI port. Replace those wildcards with exact deployed URLs outside local
 development.
@@ -153,31 +153,31 @@ containers. Build once, then install the Playwright browser runtime before the f
 run:
 
 ```bash
-dotnet restore symphony-test-1.slnx --locked-mode
-dotnet build symphony-test-1.slnx --configuration Release --no-restore
-pwsh tests/e2e/symphony-test-1.E2ETests/bin/Release/net10.0/playwright.ps1 install chromium
-dotnet test symphony-test-1.slnx --configuration Release --no-build --no-restore
+dotnet restore HelloWorldPlus.slnx --locked-mode
+dotnet build HelloWorldPlus.slnx --configuration Release --no-restore
+pwsh tests/e2e/HelloWorldPlus.E2ETests/bin/Release/net10.0/playwright.ps1 install chromium
+dotnet test HelloWorldPlus.slnx --configuration Release --no-build --no-restore
 ```
 
 Run suites individually:
 
 ```bash
-dotnet test tests/unit/symphony-test-1.UnitTests/symphony-test-1.UnitTests.csproj
-dotnet test tests/ui/symphony-test-1.WebTests/symphony-test-1.WebTests.csproj
-dotnet test tests/integration/symphony-test-1.IntegrationTests/symphony-test-1.IntegrationTests.csproj
-dotnet test tests/e2e/symphony-test-1.E2ETests/symphony-test-1.E2ETests.csproj
+dotnet test tests/unit/HelloWorldPlus.UnitTests/HelloWorldPlus.UnitTests.csproj
+dotnet test tests/ui/HelloWorldPlus.WebTests/HelloWorldPlus.WebTests.csproj
+dotnet test tests/integration/HelloWorldPlus.IntegrationTests/HelloWorldPlus.IntegrationTests.csproj
+dotnet test tests/e2e/HelloWorldPlus.E2ETests/HelloWorldPlus.E2ETests.csproj
 ```
 
 ## Verify reference quality
 
 ```bash
-dotnet restore symphony-test-1.slnx --locked-mode
-dotnet format symphony-test-1.slnx style --verify-no-changes --no-restore
-dotnet build symphony-test-1.slnx --configuration Release --no-restore
-pwsh tests/e2e/symphony-test-1.E2ETests/bin/Release/net10.0/playwright.ps1 install chromium
-dotnet test symphony-test-1.slnx --configuration Release --no-build --no-restore
-dotnet list symphony-test-1.slnx package --vulnerable --include-transitive --no-restore
+dotnet restore HelloWorldPlus.slnx --locked-mode
+dotnet format HelloWorldPlus.slnx style --verify-no-changes --no-restore
+dotnet build HelloWorldPlus.slnx --configuration Release --no-restore
+pwsh tests/e2e/HelloWorldPlus.E2ETests/bin/Release/net10.0/playwright.ps1 install chromium
+dotnet test HelloWorldPlus.slnx --configuration Release --no-build --no-restore
+dotnet list HelloWorldPlus.slnx package --vulnerable --include-transitive --no-restore
 ```
 
 Next, read [Architecture](/architecture) and inspect
-`src/symphony-test-1.Api/Features/Languages/CreateLanguage.cs`.
+`src/HelloWorldPlus.Api/Features/Languages/CreateLanguage.cs`.

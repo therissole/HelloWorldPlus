@@ -1,6 +1,6 @@
 {
   "appHost": {
-    "path": "src/symphony-test-1.AppHost/symphony-test-1.AppHost.csproj"
+    "path": "src/HelloWorldPlus.AppHost/HelloWorldPlus.AppHost.csproj"
   },
   "features": {
     "defaultWatchEnabled": "false"

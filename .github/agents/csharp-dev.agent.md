@@ -29,7 +29,7 @@ For each use case:
 8. Update relevant documentation.
 
 For a UI use case, keep its `HttpClient` operation, local contracts, state, validation feedback,
-and expected errors in one Razor component under `symphony-test-1.Web/Features`. Do not reference
+and expected errors in one Razor component under `HelloWorldPlus.Web/Features`. Do not reference
 the API assembly or introduce a resource-wide client/service. Add bUnit coverage for component
 states and Playwright coverage when the behavior spans the browser and API.
 

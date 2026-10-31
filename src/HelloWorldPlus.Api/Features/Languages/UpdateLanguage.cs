@@ -1,0 +1,187 @@
+using System.ComponentModel;
+using System.Security.Claims;
+using Dapper;
+using FluentValidation;
+using HelloWorldPlus.Api.Infrastructure.Authorization;
+using HelloWorldPlus.Api.Infrastructure.Identifiers;
+using HelloWorldPlus.Api.Infrastructure.Time;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using Npgsql;
+
+namespace HelloWorldPlus.Api.Features.Languages;
+
+public static partial class UpdateLanguage
+{
+    /// <summary>Values required to update a language.</summary>
+    /// <param name="Name">The human-readable language name. Maximum length is 100 characters.</param>
+    /// <param name="Code">The unique short code for the language. Maximum length is 10 characters.</param>
+    public sealed record Request(string Name, string Code);
+
+    internal sealed class RequestValidator : AbstractValidator<Request>
+    {
+        public RequestValidator()
+        {
+            RuleFor(request => request.Name)
+                .Cascade(CascadeMode.Stop)
+                .NotEmpty()
+                .WithMessage("Name is required.")
+                .MaximumLength(100)
+                .WithMessage("Name must be 100 characters or fewer.")
+                .OverridePropertyName("name");
+
+            RuleFor(request => request.Code)
+                .Cascade(CascadeMode.Stop)
+                .NotEmpty()
+                .WithMessage("Code is required.")
+                .MaximumLength(10)
+                .WithMessage("Code must be 10 characters or fewer.")
+                .OverridePropertyName("code");
+        }
+    }
+
+    /// <summary>Represents the updated language.</summary>
+    /// <param name="Id">The unique language identifier.</param>
+    /// <param name="Name">The human-readable language name.</param>
+    /// <param name="Code">The short code used to identify the language.</param>
+    /// <param name="CreatedAt">The UTC time when the language was created.</param>
+    /// <param name="UpdatedAt">The UTC time when the language was last updated.</param>
+    public sealed record Response(
+        LanguageId Id,
+        string Name,
+        string Code,
+        DateTimeOffset CreatedAt,
+        DateTimeOffset UpdatedAt);
+
+    public static void Map(RouteGroupBuilder group)
+    {
+        group.MapPut("/{id:guid}", Handle)
+            .WithName("UpdateLanguage")
+            .WithSummary("Update a language")
+            .WithDescription("Replaces the name and code of an existing language.")
+            .Produces<Response>()
+            .Produces(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status403Forbidden)
+            .ProducesValidationProblem()
+            .Produces<ProblemDetails>(StatusCodes.Status409Conflict)
+            .Produces(StatusCodes.Status404NotFound);
+    }
+
+    private static async Task<Results<Ok<Response>, ValidationProblem, Conflict<ProblemDetails>, NotFound, ProblemHttpResult>> Handle(
+        [Description("The unique language identifier.")] LanguageId id,
+        Request request,
+        IValidator<Request> validator,
+        ClaimsPrincipal user,
+        IOpenFgaAuthorization authorization,
+        NpgsqlDataSource dataSource,
+        TimeProvider timeProvider,
+        ILoggerFactory loggerFactory,
+        CancellationToken cancellationToken)
+    {
+        var logger = loggerFactory.CreateLogger(typeof(UpdateLanguage).FullName!);
+        var canManageCatalog = await authorization.IsAllowedAsync(
+            user,
+            relation: "can_manage_catalog",
+            @object: "system:global",
+            cancellationToken);
+        if (!canManageCatalog)
+        {
+            LogLanguageUpdateForbidden(logger, id);
+            return TypedResults.Problem(
+                statusCode: StatusCodes.Status403Forbidden,
+                title: "Forbidden",
+                detail: "You do not have permission to update this language.");
+        }
+
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            return TypedResults.ValidationProblem(validationResult.ToDictionary());
+        }
+
+        await using var connection = await dataSource.OpenConnectionAsync(cancellationToken);
+        var exists = await connection.ExecuteScalarAsync<bool>(new CommandDefinition(
+            "SELECT EXISTS (SELECT 1 FROM languages WHERE id = @Id)",
+            new { Id = id },
+            cancellationToken: cancellationToken));
+        if (!exists)
+        {
+            return TypedResults.NotFound();
+        }
+
+        var canUpdateLanguage = await authorization.IsAllowedAsync(
+            user,
+            relation: "can_update",
+            @object: $"language:{id}",
+            cancellationToken);
+        if (!canUpdateLanguage)
+        {
+            LogLanguageUpdateForbidden(logger, id);
+            return TypedResults.Problem(
+                statusCode: StatusCodes.Status403Forbidden,
+                title: "Forbidden",
+                detail: "You do not have permission to update this language.");
+        }
+
+        const string sql = """
+            UPDATE languages
+            SET
+                name = @Name,
+                code = @Code,
+                updated_at = @Now
+            WHERE id = @Id
+            RETURNING
+                id,
+                name,
+                code,
+                created_at AS CreatedAt,
+                updated_at AS UpdatedAt
+            """;
+
+        var command = new CommandDefinition(
+            sql,
+            new { Id = id, request.Name, request.Code, Now = timeProvider.GetUtcNow() },
+            cancellationToken: cancellationToken);
+
+        try
+        {
+            var databaseLanguage = await connection.QuerySingleOrDefaultAsync<DatabaseResponse>(command);
+            if (databaseLanguage is null)
+            {
+                return TypedResults.NotFound();
+            }
+
+            var language = ToResponse(databaseLanguage);
+
+            LogLanguageUpdated(logger, id);
+            return TypedResults.Ok(language);
+        }
+        catch (PostgresException exception)
+            when (exception.SqlState == PostgresErrorCodes.UniqueViolation)
+        {
+            return TypedResults.Conflict(new ProblemDetails
+            {
+                Title = "Language already exists",
+                Detail = "A language with the same name or code already exists.",
+                Status = StatusCodes.Status409Conflict
+            });
+        }
+    }
+
+    private sealed record DatabaseResponse(LanguageId Id, string Name, string Code, DateTime CreatedAt, DateTime UpdatedAt);
+
+    private static Response ToResponse(DatabaseResponse value) =>
+        new(value.Id, value.Name, value.Code, UtcInstant.FromDatabase(value.CreatedAt), UtcInstant.FromDatabase(value.UpdatedAt));
+
+    [LoggerMessage(
+        EventId = 1002,
+        Level = LogLevel.Information,
+        Message = "Updated language {LanguageId}")]
+    private static partial void LogLanguageUpdated(ILogger logger, LanguageId languageId);
+
+    [LoggerMessage(
+        EventId = 1005,
+        Level = LogLevel.Information,
+        Message = "Language update was forbidden by OpenFGA for language {LanguageId}")]
+    private static partial void LogLanguageUpdateForbidden(ILogger logger, LanguageId languageId);
+}

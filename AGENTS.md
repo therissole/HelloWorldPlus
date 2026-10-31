@@ -9,7 +9,7 @@ ASP.NET Core. Preserve both its behavior and its teaching value.
 
 - Treat one HTTP request as one slice.
 - Keep each slice in one descriptively named file under
-  `src/symphony-test-1.Api/Features/<Capability>/`.
+  `src/HelloWorldPlus.Api/Features/<Capability>/`.
 - A slice owns its route, request and response records, validation, handler, Dapper SQL, mapping,
   typed results, and expected failure handling.
 - Register slices in `<Capability>Feature.cs`. Keep `Program.cs` as the composition root.
@@ -21,7 +21,7 @@ ASP.NET Core. Preserve both its behavior and its teaching value.
 - Prefer small duplication over coupling unrelated requests. Extract a shared concept only after
   it has stable cross-cutting meaning.
 - Keep UI use cases in one descriptively named Razor component under
-  `src/symphony-test-1.Web/Features/<Capability>/`.
+  `src/HelloWorldPlus.Web/Features/<Capability>/`.
 - A UI slice owns its HTTP call, local request/response records, state, validation feedback, and
   expected failure handling. Do not add resource-wide API clients/services or share server DTOs.
 - The WebAssembly project must not reference the API project or persistence packages. Share only
@@ -67,13 +67,13 @@ Use `.github/skills/build-vertical-slice/SKILL.md` for feature work.
 Run:
 
 ```bash
-dotnet restore symphony-test-1.slnx --locked-mode
-dotnet build symphony-test-1.slnx --configuration Release --no-restore
-pwsh tools/lint-openapi.ps1 src/symphony-test-1.Api/obj/openapi/symphony-test-1.json
+dotnet restore HelloWorldPlus.slnx --locked-mode
+dotnet build HelloWorldPlus.slnx --configuration Release --no-restore
+pwsh tools/lint-openapi.ps1 src/HelloWorldPlus.Api/obj/openapi/HelloWorldPlus.json
 pwsh tools/test-openfga-model.ps1
-pwsh tests/e2e/symphony-test-1.E2ETests/bin/Release/net10.0/playwright.ps1 install chromium
-dotnet test symphony-test-1.slnx --configuration Release --no-build --no-restore
-dotnet list symphony-test-1.slnx package --vulnerable --include-transitive --no-restore
+pwsh tests/e2e/HelloWorldPlus.E2ETests/bin/Release/net10.0/playwright.ps1 install chromium
+dotnet test HelloWorldPlus.slnx --configuration Release --no-build --no-restore
+dotnet list HelloWorldPlus.slnx package --vulnerable --include-transitive --no-restore
 ```
 
 Docker must be available for integration and end-to-end tests.
@@ -92,13 +92,13 @@ If the installed CLI is not visible on PATH in a Windows agent process, invoke
 `& "$env:USERPROFILE\.aspire\bin\aspire.exe" run` instead.
 
 Keep the watcher open for the task and use the dashboard or startup output to obtain that run's
-**Symphony administration** endpoint. The AppHost starts `api` and `web` with non-interactive
+**HelloWorldPlus administration** endpoint. The AppHost starts `api` and `web` with non-interactive
 `dotnet watch` commands. Do not
 manually tear down and recreate PostgreSQL, Keycloak, or migrations after an application or UI
 edit. If an expected change is not visible, stop and start only its resource with
 `aspire resource <resource-name> stop` and `aspire resource <resource-name> start`.
 
-With the watcher running, request `<Symphony administration endpoint>/api/health` for an immediate
+With the watcher running, request `<HelloWorldPlus administration endpoint>/api/health` for an immediate
 unauthenticated API check and navigate or reload the same endpoint in a browser to verify
 WebAssembly UI changes through the gateway. When Aspire reports a restart or rebuild, wait for the
 endpoint to respond before
