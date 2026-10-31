@@ -1,0 +1,65 @@
+@HelloWorldPlus.Api_HostAddress = http://localhost:8080
+
+### Health Check
+GET {{HelloWorldPlus.Api_HostAddress}}/api/health
+Accept: application/json
+
+###
+
+### Get All Languages
+GET {{HelloWorldPlus.Api_HostAddress}}/api/languages
+Accept: application/json
+
+###
+
+### Create a Language
+POST {{HelloWorldPlus.Api_HostAddress}}/api/languages
+Content-Type: application/json
+
+{
+  "name": "French",
+  "code": "fr"
+}
+
+###
+
+### Update a Language
+PUT {{HelloWorldPlus.Api_HostAddress}}/api/languages/{{languageId}}
+Content-Type: application/json
+
+{
+  "name": "Français",
+  "code": "fr"
+}
+
+###
+
+### Get All Greetings
+GET {{HelloWorldPlus.Api_HostAddress}}/api/greetings
+Accept: application/json
+
+###
+
+### Get Greeting by Language Code
+GET {{HelloWorldPlus.Api_HostAddress}}/api/greetings/by-language/en
+Accept: application/json
+
+###
+
+### Get Formal Greeting by Language Code
+GET {{HelloWorldPlus.Api_HostAddress}}/api/greetings/by-language/en?formal=true
+Accept: application/json
+
+###
+
+### Create a Greeting
+POST {{HelloWorldPlus.Api_HostAddress}}/api/greetings
+Content-Type: application/json
+
+{
+  "languageId": "{{languageId}}",
+  "greetingText": "Bonjour",
+  "formal": false
+}
+
+###

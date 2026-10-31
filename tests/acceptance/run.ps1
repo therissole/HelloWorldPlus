@@ -11,17 +11,17 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $solutionRoot = Resolve-Path (Join-Path $PSScriptRoot '..\..')
-$acceptanceProject = Join-Path $solutionRoot 'tests\acceptance\symphony-test-1.AcceptanceTests\symphony-test-1.AcceptanceTests.csproj'
-$previousGatewayPort = $env:SYMPHONY_API_PORT
-$previousKeycloakPort = $env:SYMPHONY_KEYCLOAK_PORT
-$previousPostgresPort = $env:SYMPHONY_POSTGRES_PORT
-$previousOpenFgaPort = $env:SYMPHONY_OPENFGA_PORT
+$acceptanceProject = Join-Path $solutionRoot 'tests\acceptance\HelloWorldPlus.AcceptanceTests\HelloWorldPlus.AcceptanceTests.csproj'
+$previousGatewayPort = $env:HELLOWORLDPLUS_API_PORT
+$previousKeycloakPort = $env:HELLOWORLDPLUS_KEYCLOAK_PORT
+$previousPostgresPort = $env:HELLOWORLDPLUS_POSTGRES_PORT
+$previousOpenFgaPort = $env:HELLOWORLDPLUS_OPENFGA_PORT
 
 try {
-    $env:SYMPHONY_API_PORT = $GatewayPort
-    $env:SYMPHONY_KEYCLOAK_PORT = $KeycloakPort
-    $env:SYMPHONY_POSTGRES_PORT = $PostgresPort
-    $env:SYMPHONY_OPENFGA_PORT = $OpenFgaPort
+    $env:HELLOWORLDPLUS_API_PORT = $GatewayPort
+    $env:HELLOWORLDPLUS_KEYCLOAK_PORT = $KeycloakPort
+    $env:HELLOWORLDPLUS_POSTGRES_PORT = $PostgresPort
+    $env:HELLOWORLDPLUS_OPENFGA_PORT = $OpenFgaPort
 
     & docker compose -p $ProjectName -f (Join-Path $solutionRoot 'docker-compose.yml') -f (Join-Path $PSScriptRoot 'docker-compose.acceptance.yml') up --build --detach
     if ($LASTEXITCODE -ne 0) { throw 'The acceptance environment did not start.' }
@@ -41,7 +41,7 @@ try {
     }
 
     $env:ACCEPTANCE_BASE_URL = "http://localhost:$GatewayPort/"
-    $env:ACCEPTANCE_TOKEN_ENDPOINT = "http://localhost:$KeycloakPort/realms/symphony/protocol/openid-connect/token"
+    $env:ACCEPTANCE_TOKEN_ENDPOINT = "http://localhost:$KeycloakPort/realms/helloworldplus/protocol/openid-connect/token"
     $env:ACCEPTANCE_CLIENT_ID = 'acceptance-tests'
     $env:ACCEPTANCE_CLIENT_SECRET = 'acceptance-tests-local-secret'
     $env:ACCEPTANCE_BROWSER_USERNAME = 'acceptance-browser'
@@ -73,8 +73,8 @@ try {
 }
 finally {
     & docker compose -p $ProjectName -f (Join-Path $solutionRoot 'docker-compose.yml') -f (Join-Path $PSScriptRoot 'docker-compose.acceptance.yml') down --volumes --remove-orphans
-    $env:SYMPHONY_API_PORT = $previousGatewayPort
-    $env:SYMPHONY_KEYCLOAK_PORT = $previousKeycloakPort
-    $env:SYMPHONY_POSTGRES_PORT = $previousPostgresPort
-    $env:SYMPHONY_OPENFGA_PORT = $previousOpenFgaPort
+    $env:HELLOWORLDPLUS_API_PORT = $previousGatewayPort
+    $env:HELLOWORLDPLUS_KEYCLOAK_PORT = $previousKeycloakPort
+    $env:HELLOWORLDPLUS_POSTGRES_PORT = $previousPostgresPort
+    $env:HELLOWORLDPLUS_OPENFGA_PORT = $previousOpenFgaPort
 }

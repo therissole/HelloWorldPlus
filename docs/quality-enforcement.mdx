@@ -20,6 +20,9 @@ following policy to every project:
 - Every project uses a committed `packages.lock.json`.
 - the banned-API analyzer reads `BannedSymbols.txt`.
 
+The Web project also pins the SDK's WebAssembly build pack to `10.0.10` so installed
+workload manifests cannot change locked restores. Update this pin with the SDK baseline.
+
 `.editorconfig` is the source of truth for editor whitespace, namespace placement, naming, and the
 compiler-enforceable style rules. CI runs Roslyn's semantic `style` formatter rather than
 normalizing line endings, so Windows and Unix checkouts remain valid. `BannedSymbols.txt` rejects
@@ -28,7 +31,7 @@ nondeterministic wall-clock access, blocking sleeps, and the alternate JSON stac
 
 ## Repository Roslyn analyzer
 
-`tools/SymphonyTest1.Analyzers` is referenced by the API as an analyzer, so its diagnostics run
+`tools/HelloWorldPlus.Analyzers` is referenced by the API as an analyzer, so its diagnostics run
 inside normal `dotnet build`:
 
 | Diagnostic | Enforced convention |
@@ -73,13 +76,13 @@ artifact without starting the application or downloading another package. It req
 Run the same deterministic gate used by CI:
 
 ```powershell
-dotnet restore symphony-test-1.slnx --locked-mode
-dotnet build symphony-test-1.slnx --configuration Release --no-restore
-pwsh tools/lint-openapi.ps1 src/symphony-test-1.Api/obj/openapi/symphony-test-1.json
+dotnet restore HelloWorldPlus.slnx --locked-mode
+dotnet build HelloWorldPlus.slnx --configuration Release --no-restore
+pwsh tools/lint-openapi.ps1 src/HelloWorldPlus.Api/obj/openapi/HelloWorldPlus.json
 pwsh tools/test-openfga-model.ps1
-dotnet format symphony-test-1.slnx style --verify-no-changes --no-restore
-dotnet test symphony-test-1.slnx --configuration Release --no-build --no-restore
-dotnet list symphony-test-1.slnx package --vulnerable --include-transitive --no-restore
+dotnet format HelloWorldPlus.slnx style --verify-no-changes --no-restore
+dotnet test HelloWorldPlus.slnx --configuration Release --no-build --no-restore
+dotnet list HelloWorldPlus.slnx package --vulnerable --include-transitive --no-restore
 ```
 
 Docker must be available for integration, end-to-end, and acceptance tests. CI additionally runs

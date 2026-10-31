@@ -5,15 +5,15 @@ COPY ["global.json", "."]
 COPY ["Directory.Build.props", "."]
 COPY ["BannedSymbols.txt", "."]
 COPY [".editorconfig", "."]
-COPY ["src/symphony-test-1.DatabaseMigrations/symphony-test-1.DatabaseMigrations.csproj", "src/symphony-test-1.DatabaseMigrations/"]
-COPY ["src/symphony-test-1.DatabaseMigrations/packages.lock.json", "src/symphony-test-1.DatabaseMigrations/"]
-RUN dotnet restore "src/symphony-test-1.DatabaseMigrations/symphony-test-1.DatabaseMigrations.csproj" --locked-mode
+COPY ["src/HelloWorldPlus.DatabaseMigrations/HelloWorldPlus.DatabaseMigrations.csproj", "src/HelloWorldPlus.DatabaseMigrations/"]
+COPY ["src/HelloWorldPlus.DatabaseMigrations/packages.lock.json", "src/HelloWorldPlus.DatabaseMigrations/"]
+RUN dotnet restore "src/HelloWorldPlus.DatabaseMigrations/HelloWorldPlus.DatabaseMigrations.csproj" --locked-mode
 
 COPY . .
-WORKDIR "/src/src/symphony-test-1.DatabaseMigrations"
-RUN dotnet publish "symphony-test-1.DatabaseMigrations.csproj" -c Release -o /app/publish --no-restore
+WORKDIR "/src/src/HelloWorldPlus.DatabaseMigrations"
+RUN dotnet publish "HelloWorldPlus.DatabaseMigrations.csproj" -c Release -o /app/publish --no-restore
 
 FROM mcr.microsoft.com/dotnet/runtime:10.0.10 AS final
 WORKDIR /app
 COPY --from=build /app/publish .
-ENTRYPOINT ["dotnet", "SymphonyTest1.DatabaseMigrations.dll"]
+ENTRYPOINT ["dotnet", "HelloWorldPlus.DatabaseMigrations.dll"]

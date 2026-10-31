@@ -7,7 +7,7 @@ Testcontainers.
 ## Non-negotiable architecture
 
 - One HTTP request/use case is one vertical slice.
-- Place slices in `src/symphony-test-1.Api/Features/<Capability>/<UseCase>.cs`.
+- Place slices in `src/HelloWorldPlus.Api/Features/<Capability>/<UseCase>.cs`.
 - Keep route mapping, request/response records, validation, handler, tailored SQL, result mapping,
   and expected errors in that slice.
 - Register the slice in `<Capability>Feature.cs`.
@@ -16,7 +16,7 @@ Testcontainers.
 - Do not add MediatR just to dispatch handlers. VSA does not require it.
 - Share platform mechanics only: database data source, exception handling, OpenTelemetry, and
   structured logging.
-- Keep UI use cases under `src/symphony-test-1.Web/Features/<Capability>/`, with one Razor
+- Keep UI use cases under `src/HelloWorldPlus.Web/Features/<Capability>/`, with one Razor
   component per list/create/view/update/delete interaction.
 - UI slices own the HTTP call, local request/response records, state, and error handling. Do not
   add resource-wide API clients/services or reference the API project from the WASM project.

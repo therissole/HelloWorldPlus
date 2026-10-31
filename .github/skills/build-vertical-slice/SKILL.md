@@ -58,7 +58,7 @@ the feature folder. Everything specific to fulfilling one request belongs in tha
 ## WebAssembly UI slices
 
 For UI feature work, keep list/create/view/update/delete interactions in separate, descriptively
-named Razor components under `src/symphony-test-1.Web/Features/<Capability>/`.
+named Razor components under `src/HelloWorldPlus.Web/Features/<Capability>/`.
 
 1. Keep the `HttpClient` operation, smallest local request/response records, loading state, form
    feedback, and expected error handling in the component.

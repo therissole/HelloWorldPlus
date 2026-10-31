@@ -1,0 +1,31 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/HelloWorldPlus.AppHost/HelloWorldPlus.AppHost.csproj" />
+    <Project Path="src/HelloWorldPlus.Api/HelloWorldPlus.Api.csproj" />
+    <Project Path="src/HelloWorldPlus.ClientServiceDefaults/HelloWorldPlus.ClientServiceDefaults.csproj" />
+    <Project Path="src/HelloWorldPlus.DatabaseMigrations/HelloWorldPlus.DatabaseMigrations.csproj" />
+    <Project Path="src/HelloWorldPlus.OpenFgaProvisioning/HelloWorldPlus.OpenFgaProvisioning.csproj" />
+    <Project Path="src/HelloWorldPlus.Gateway/HelloWorldPlus.Gateway.csproj" />
+    <Project Path="src/HelloWorldPlus.ServiceDefaults/HelloWorldPlus.ServiceDefaults.csproj" />
+    <Project Path="src/HelloWorldPlus.Web/HelloWorldPlus.Web.csproj" />
+  </Folder>
+  <Folder Name="/tests/" />
+  <Folder Name="/tests/acceptance/">
+    <Project Path="tests/acceptance/HelloWorldPlus.AcceptanceTests/HelloWorldPlus.AcceptanceTests.csproj" />
+  </Folder>
+  <Folder Name="/tests/e2e/">
+    <Project Path="tests/e2e/HelloWorldPlus.E2ETests/HelloWorldPlus.E2ETests.csproj" />
+  </Folder>
+  <Folder Name="/tests/integration/">
+    <Project Path="tests/integration/HelloWorldPlus.IntegrationTests/HelloWorldPlus.IntegrationTests.csproj" />
+  </Folder>
+  <Folder Name="/tests/unit/">
+    <Project Path="tests/unit/HelloWorldPlus.UnitTests/HelloWorldPlus.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/tests/ui/">
+    <Project Path="tests/ui/HelloWorldPlus.WebTests/HelloWorldPlus.WebTests.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/HelloWorldPlus.Analyzers/HelloWorldPlus.Analyzers.csproj" />
+  </Folder>
+</Solution>

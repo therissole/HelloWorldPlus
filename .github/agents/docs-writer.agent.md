@@ -30,7 +30,7 @@ Keep these surfaces synchronized:
 - `docs/features/*.mdx` for capability behavior and slice inventory.
 - `docs/api-reference/*.mdx` for exact routes, payloads, status codes, and Problem Details.
 - `docs/introduction.mdx` and `docs/quickstart.mdx` for current .NET and Docker requirements.
-- `src/symphony-test-1.Web` and `tests/ui` for implemented WASM behavior and component coverage.
+- `src/HelloWorldPlus.Web` and `tests/ui` for implemented WASM behavior and component coverage.
 - Agent instructions and skills when architecture conventions change.
 
 Use working examples, relative repository links, accurate versions, and Mermaid only when it makes

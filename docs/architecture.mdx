@@ -73,7 +73,7 @@ diagnosis and are then pruned in bounded batches; pending operations have no age
 ## Project structure
 
 ```text
-src/symphony-test-1.Api/
+src/HelloWorldPlus.Api/
 ├── Features/
 │   ├── Languages/
 │   │   ├── LanguagesFeature.cs
@@ -95,15 +95,15 @@ src/symphony-test-1.Api/
 │       └── GetHealth.cs
 └── Program.cs
 
-src/symphony-test-1.AppHost/
+src/HelloWorldPlus.AppHost/
 ├── AppHost.cs                     Aspire resource graph and startup ordering
 ├── Realms/                        local Keycloak realm import
 └── Themes/                        local Keycloak login-theme extension
 
-src/symphony-test-1.Gateway/
+src/HelloWorldPlus.Gateway/
 └── Program.cs                     same-origin UI/API proxy and published WASM host
 
-src/symphony-test-1.Web/
+src/HelloWorldPlus.Web/
 ├── Components/
 │   ├── Layout/                    application shell and navigation
 │   └── <shared presentation states>
@@ -115,10 +115,10 @@ src/symphony-test-1.Web/
     ├── ApiProblem.cs              RFC 7807 parsing mechanics
     └── Authentication/            test-isolated authentication mechanics
 
-src/symphony-test-1.DatabaseMigrations/
+src/HelloWorldPlus.DatabaseMigrations/
 └── Program.cs                     Versioned, checksum-verified SQL migration runner
 
-src/symphony-test-1.ServiceDefaults/
+src/HelloWorldPlus.ServiceDefaults/
 └── Extensions.cs                  Telemetry, health, resilience, and discovery defaults
 ```
 
@@ -324,7 +324,7 @@ resolve to unique physical values, while server-issued identifiers remain inside
 The AppHost uses Aspire's Blazor hosting integration to serve the WebAssembly client through the
 gateway. It provides client configuration before the runtime starts and maps the browser's relative
 `/_otlp` endpoint to an authenticated server-side proxy. The browser-safe
-`symphony-test-1.ClientServiceDefaults` Razor class library contributes an
+`HelloWorldPlus.ClientServiceDefaults` Razor class library contributes an
 `onRuntimeConfigLoaded` JavaScript initializer, which fetches Aspire's generated
 `_blazor/_configuration` endpoint before .NET starts. The WebAssembly client imports those
 environment values into configuration, starts its OpenTelemetry providers explicitly, and uses an

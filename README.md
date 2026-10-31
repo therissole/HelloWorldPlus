@@ -40,13 +40,13 @@ operation owns its route, contract, validation, handler, SQL, mapping, and expec
 Prerequisites: Docker, the .NET 10 SDK, the Aspire CLI, and Node.js 20.17 or later.
 
 ```bash
-git clone https://github.com/therissole/symphony-test-1.git
-cd symphony-test-1
+git clone https://github.com/therissole/HelloWorldPlus.git
+cd HelloWorldPlus
 aspire run
 ```
 
-The Aspire dashboard shows the dynamically assigned **Symphony administration** endpoint. Open it
-and sign in as `symphony-admin` with the temporary local password `ChangeMe!12345`; Keycloak
+The Aspire dashboard shows the dynamically assigned **HelloWorldPlus administration** endpoint. Open it
+and sign in as `helloworldplus-admin` with the temporary local password `ChangeMe!12345`; Keycloak
 requires a new password at first sign-in. These credentials exist only in the disposable local
 realm. Use `/api/health` without authentication to verify database-aware health, or
 `/openapi/v1.json` for the OpenAPI document.
@@ -64,9 +64,9 @@ gateway at startup, so no Keycloak or application port is compiled into the Aspi
 ## Project structure
 
 ```text
-src/symphony-test-1.AppHost/       # Aspire application model and orchestration
-src/symphony-test-1.Gateway/       # same-origin UI/API boundary and production WASM host
-src/symphony-test-1.Api/
+src/HelloWorldPlus.AppHost/       # Aspire application model and orchestration
+src/HelloWorldPlus.Gateway/       # same-origin UI/API boundary and production WASM host
+src/HelloWorldPlus.Api/
 ├── Features/
 │   ├── Languages/
 │   │   ├── LanguagesFeature.cs
@@ -83,7 +83,7 @@ src/symphony-test-1.Api/
 │       └── GetHealth.cs
 └── Program.cs
 
-src/symphony-test-1.Web/
+src/HelloWorldPlus.Web/
 ├── Components/                    # layout and shared presentation mechanics
 ├── Features/
 │   ├── Dashboard/
@@ -92,7 +92,7 @@ src/symphony-test-1.Web/
 ├── Infrastructure/                # RFC 7807 response parsing only
 └── wwwroot/                       # WASM host page and application styles
 
-src/symphony-test-1.DatabaseMigrations/
+src/HelloWorldPlus.DatabaseMigrations/
 └── Program.cs                     # one-shot, versioned SQL migration resource
 
 openfga/
@@ -100,10 +100,10 @@ openfga/
 ├── authorization-model.json         # generated API model used for provisioning
 └── authorization-model.tests.fga.yaml # model assertions and representative tuples
 
-src/symphony-test-1.OpenFgaProvisioning/
+src/HelloWorldPlus.OpenFgaProvisioning/
 └── Program.cs                       # idempotently creates the named store and model version
 
-src/symphony-test-1.ServiceDefaults/
+src/HelloWorldPlus.ServiceDefaults/
 └── Extensions.cs                  # telemetry, health, resilience, discovery
 
 tests/
@@ -119,7 +119,7 @@ tests/
 └── workflows/     # build, test, audit, and container verification
 
 tools/
-├── SymphonyTest1.Analyzers/      # compile-time vertical-slice rules
+├── HelloWorldPlus.Analyzers/      # compile-time vertical-slice rules
 └── lint-openapi.ps1              # generated API-contract policy
 ```
 
@@ -149,7 +149,7 @@ request behavior. See [the architecture guide](docs/architecture.mdx) and the
 | Greetings | `GET /api/greetings` (optional `languageId`, `formal`, `createdFrom`, `createdTo` filters), `GET /api/greetings/{id}`, `GET /api/greetings/by-language/{code}`, `POST /api/greetings`, `PUT /api/greetings/{id}`, `DELETE /api/greetings/{id}` |
 
 Language and greeting endpoints require a Keycloak access token whose audience is
-`symphony-api`. The dashboard and both management pages initiate the OIDC sign-in flow when the
+`helloworldplus-api`. The dashboard and both management pages initiate the OIDC sign-in flow when the
 visitor is anonymous. Health deliberately remains anonymous for orchestrators and diagnostics.
 
 The local Mintlify site generates its interactive API reference from the API's live Development
@@ -166,7 +166,7 @@ Aspire is the primary local-development path:
 aspire run
 ```
 
-The AppHost creates Keycloak with the committed local `symphony` realm and PostgreSQL, runs every
+The AppHost creates Keycloak with the committed local `helloworldplus` realm and PostgreSQL, runs every
 unapplied `db/migrations/V*.sql` file, verifies
 checksums for migrations already applied, starts the API only after migration success, starts the
 Web development server and same-origin gateway, and starts
@@ -191,7 +191,7 @@ If a Windows agent has not inherited the Aspire CLI PATH entry, use
 `& "$env:USERPROFILE\.aspire\bin\aspire.exe" run`.
 
 Leave that command running for the task. The dashboard and startup output identify the isolated
-**Symphony administration** endpoint for this run. The `web` and `api` resources watch their own
+**HelloWorldPlus administration** endpoint for this run. The `web` and `api` resources watch their own
 source independently; the gateway remains running. Do not manually tear down and recreate PostgreSQL,
 Keycloak, or migrations after an application or UI edit. If a native watcher cannot apply an edit,
 restart only that resource from the dashboard or CLI:
@@ -206,7 +206,7 @@ aspire resource web start
 Then verify the result with the endpoint allocated for the current run:
 
 ```powershell
-Invoke-RestMethod <Symphony-administration-endpoint>/api/health
+Invoke-RestMethod <HelloWorldPlus-administration-endpoint>/api/health
 ```
 
 The gateway serves the browser client at that same endpoint. In development it proxies UI requests
@@ -240,14 +240,14 @@ docker compose down -v
 Run the quality checks:
 
 ```bash
-dotnet restore symphony-test-1.slnx --locked-mode
-dotnet build symphony-test-1.slnx --configuration Release --no-restore
-pwsh tools/lint-openapi.ps1 src/symphony-test-1.Api/obj/openapi/symphony-test-1.json
+dotnet restore HelloWorldPlus.slnx --locked-mode
+dotnet build HelloWorldPlus.slnx --configuration Release --no-restore
+pwsh tools/lint-openapi.ps1 src/HelloWorldPlus.Api/obj/openapi/HelloWorldPlus.json
 pwsh tools/test-openfga-model.ps1
-dotnet format symphony-test-1.slnx style --verify-no-changes --no-restore
-pwsh tests/e2e/symphony-test-1.E2ETests/bin/Release/net10.0/playwright.ps1 install chromium
-dotnet test symphony-test-1.slnx --configuration Release --no-build --no-restore
-dotnet list symphony-test-1.slnx package --vulnerable --include-transitive --no-restore
+dotnet format HelloWorldPlus.slnx style --verify-no-changes --no-restore
+pwsh tests/e2e/HelloWorldPlus.E2ETests/bin/Release/net10.0/playwright.ps1 install chromium
+dotnet test HelloWorldPlus.slnx --configuration Release --no-build --no-restore
+dotnet list HelloWorldPlus.slnx package --vulnerable --include-transitive --no-restore
 ```
 
 Docker must be running for integration and end-to-end tests.
